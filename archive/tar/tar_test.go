@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/drone/drone-cache-lib/archive"
+	"github.com/ecmchow/drone-cache-lib/archive"
 	"github.com/franela/goblin"
 )
 
@@ -200,7 +200,7 @@ func createMountContent() {
 	// Write files and their content
 	var err error
 	for _, element := range mountFiles {
-		path := "/tmp/fixtures/mounts/"+element.Path
+		path := "/tmp/fixtures/mounts/" + element.Path
 
 		err = ioutil.WriteFile(path, []byte(element.Content), 0644)
 		if err != nil {

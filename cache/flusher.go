@@ -3,8 +3,8 @@ package cache
 import (
 	"time"
 
+	"github.com/ecmchow/drone-cache-lib/storage"
 	log "github.com/sirupsen/logrus"
-	"github.com/drone/drone-cache-lib/storage"
 )
 
 // DirtyFunc defines when an cache item is outdated.

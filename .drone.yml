@@ -1,34 +1,33 @@
----
 kind: pipeline
-name: testing
-
-platform:
-  os: linux
-  arch: amd64
+type: docker
+name: Build
 
 steps:
-- name: vet
-  image: golang:1.12
-  commands:
-  - go vet ./...
-  volumes:
-  - name: gopath
-    path: /go
+  - name: vet
+    image: golang:1.22.3-bookworm
+    commands:
+      - go vet ./...
+    volumes:
+      - name: gopath
+        path: /go
 
-- name: test
-  image: golang:1.12
-  commands:
-  - go test -cover ./...
-  volumes:
-  - name: gopath
-    path: /go
+  - name: test
+    image: golang:1.22.3-bookworm
+    commands:
+      - go test -p 1 -cover ./...
+    volumes:
+      - name: gopath
+        path: /go
 
 volumes:
-- name: gopath
-  temp: {}
+  - name: gopath
+    temp: {}
 
 trigger:
   ref:
-  - refs/heads/master
-  - refs/tags/**
-  - refs/pull/**
+    - refs/heads/master
+    - refs/tags/**
+    - refs/pull/**
+  event:
+    - push
+    - pull_request

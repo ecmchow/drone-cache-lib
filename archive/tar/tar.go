@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ecmchow/drone-cache-lib/archive"
 	log "github.com/sirupsen/logrus"
-	"github.com/drone/drone-cache-lib/archive"
 )
 
 type tarArchive struct{}

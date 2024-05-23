@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/drone/drone-cache-lib/storage/dummy"
+	"github.com/ecmchow/drone-cache-lib/storage/dummy"
 	"github.com/franela/goblin"
 )
 

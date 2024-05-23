@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/drone/drone-cache-lib/storage"
+	"github.com/ecmchow/drone-cache-lib/storage"
 )
 
 // Options contains configuration for the S3 connection.

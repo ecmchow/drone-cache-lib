@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/drone/drone-cache-lib/archive"
-	"github.com/drone/drone-cache-lib/archive/tar"
-	"github.com/drone/drone-cache-lib/archive/tgz"
+	"github.com/ecmchow/drone-cache-lib/archive"
+	"github.com/ecmchow/drone-cache-lib/archive/tar"
+	"github.com/ecmchow/drone-cache-lib/archive/tgz"
 )
 
 // FromFilename determines the archive format to use based on the name.

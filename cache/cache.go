@@ -3,10 +3,10 @@ package cache
 import (
 	"io"
 
+	"github.com/ecmchow/drone-cache-lib/archive"
+	"github.com/ecmchow/drone-cache-lib/archive/tar"
+	"github.com/ecmchow/drone-cache-lib/storage"
 	log "github.com/sirupsen/logrus"
-	"github.com/drone/drone-cache-lib/archive"
-	"github.com/drone/drone-cache-lib/archive/tar"
-	"github.com/drone/drone-cache-lib/storage"
 )
 
 // Cache defines a basic cache object.

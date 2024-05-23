@@ -1,4 +1,4 @@
-package tgz
+package zstd
 
 // special thanks to this medium article:
 // https://medium.com/@skdomino/taring-untaring-files-in-go-6b07cf56bc07
@@ -6,32 +6,37 @@ package tgz
 import (
 	"io"
 
-	"github.com/klauspost/compress/gzip"
+	"github.com/klauspost/compress/zstd"
 
 	"github.com/ecmchow/drone-cache-lib/archive"
 	"github.com/ecmchow/drone-cache-lib/archive/tar"
 )
 
-type tgzArchive struct{}
+type zstdArchive struct{}
 
 // New creates an archive that uses the .tar.gz file format.
 func New() archive.Archive {
-	return &tgzArchive{}
+	return &zstdArchive{}
 }
 
-func (a *tgzArchive) Pack(srcs []string, w io.Writer) error {
-	gw := gzip.NewWriter(w)
-	defer gw.Close()
+func (a *zstdArchive) Pack(srcs []string, w io.Writer) error {
+	zw, err := zstd.NewWriter(w)
+
+	if err != nil {
+		return err
+	}
+
+	defer zw.Close()
 
 	taP := tar.New()
 
-	err := taP.Pack(srcs, gw)
+	pErr := taP.Pack(srcs, zw)
 
-	return err
+	return pErr
 }
 
-func (a *tgzArchive) Unpack(dst string, r io.Reader) error {
-	gr, err := gzip.NewReader(r)
+func (a *zstdArchive) Unpack(dst string, r io.Reader) error {
+	zr, err := zstd.NewReader(r)
 
 	if err != nil {
 		return err
@@ -39,7 +44,7 @@ func (a *tgzArchive) Unpack(dst string, r io.Reader) error {
 
 	taU := tar.New()
 
-	fwErr := taU.Unpack(dst, gr)
+	fwErr := taU.Unpack(dst, zr)
 
 	return fwErr
 }
