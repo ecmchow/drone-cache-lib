@@ -45,3 +45,4 @@ err := cache.Restore(src)
 - .tar
 - .tar.gz
 - .tar.lz4
+- .tar.zst
