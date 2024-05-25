@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/ecmchow/drone-cache-lib/archive"
-	"github.com/ecmchow/drone-cache-lib/archive/lz4"
+	"github.com/ecmchow/drone-cache-lib/archive/s2"
 	"github.com/ecmchow/drone-cache-lib/archive/tar"
 	"github.com/ecmchow/drone-cache-lib/archive/tgz"
 	"github.com/ecmchow/drone-cache-lib/archive/zstd"
@@ -21,11 +21,11 @@ func FromFilename(name string) (archive.Archive, error) {
 		return tgz.New(), nil
 	}
 
-	if strings.HasSuffix(name, ".lz4") {
-		return lz4.New(), nil
+	if strings.HasSuffix(name, ".tsz") || strings.HasSuffix(name, ".tar.sz") {
+		return s2.New(), nil
 	}
 
-	if strings.HasSuffix(name, ".zst") {
+	if strings.HasSuffix(name, ".tzst") || strings.HasSuffix(name, ".tar.zst") {
 		return zstd.New(), nil
 	}
 

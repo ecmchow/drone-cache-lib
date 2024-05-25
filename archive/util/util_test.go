@@ -25,12 +25,22 @@ func TestArchive(t *testing.T) {
 			g.Assert(err == nil).IsTrue("failed to determine .tar.gz suffix")
 		})
 
-		g.It("Should return lz4Archive for .lz4", func() {
-			_, err := FromFilename("filename.tar.lz4")
-			g.Assert(err == nil).IsTrue("failed to determine .tar.lz4 suffix")
+		g.It("Should return s2Archive for .tsz", func() {
+			_, err := FromFilename("filename.tsz")
+			g.Assert(err == nil).IsTrue("failed to determine .tsz suffix")
 		})
 
-		g.It("Should return zstdArchive for .zst", func() {
+		g.It("Should return s2Archive for .tar.sz", func() {
+			_, err := FromFilename("filename.tar.sz")
+			g.Assert(err == nil).IsTrue("failed to determine .tar.sz suffix")
+		})
+
+		g.It("Should return zstdArchive for .tzst", func() {
+			_, err := FromFilename("filename.tzst")
+			g.Assert(err == nil).IsTrue("failed to determine .tzst suffix")
+		})
+
+		g.It("Should return zstdArchive for .tar.zst", func() {
 			_, err := FromFilename("filename.tar.zst")
 			g.Assert(err == nil).IsTrue("failed to determine .tar.zst suffix")
 		})

@@ -1,4 +1,4 @@
-package lz4
+package s2
 
 import (
 	"fmt"
@@ -17,11 +17,11 @@ type mountFile struct {
 	Content string
 }
 
-func TestLz4Archive(t *testing.T) {
+func TestS2Archive(t *testing.T) {
 	g := goblin.Goblin(t)
 	wd, _ := os.Getwd()
 
-	g.Describe("lz4 package", func() {
+	g.Describe("s2 package", func() {
 		g.Before(func() {
 			// Create necessary fixtures
 			createFixtures()
@@ -33,19 +33,19 @@ func TestLz4Archive(t *testing.T) {
 		})
 
 		g.Describe("New", func() {
-			g.It("Should return lz4Archive", func() {
+			g.It("Should return s2Archive", func() {
 				tga := New()
-				g.Assert(tga != nil).IsTrue("failed to create lz4Archive")
+				g.Assert(tga != nil).IsTrue("failed to create s2Archive")
 			})
 		})
 
 		g.Describe("Pack", func() {
 			g.It("Should return no error", func() {
 				tga := New()
-				g.Assert(tga != nil).IsTrue("failed to create lz4Archive")
+				g.Assert(tga != nil).IsTrue("failed to create s2Archive")
 
 				os.Chdir("/tmp/fixtures/mounts")
-				err, werr := packIt(tga, validMount, "/tmp/fixtures/tarfiles/test.tar.lz4")
+				err, werr := packIt(tga, validMount, "/tmp/fixtures/tarfiles/test.tar.zz")
 				os.Chdir(wd)
 
 				if err != nil {
@@ -60,9 +60,9 @@ func TestLz4Archive(t *testing.T) {
 
 			g.It("Should return error if mount does not exist", func() {
 				tga := New()
-				g.Assert(tga != nil).IsTrue("failed to create lz4Archive")
+				g.Assert(tga != nil).IsTrue("failed to create s2Archive")
 
-				err, werr := packIt(tga, invalidMount, "/tmp/fixtures/tarfiles/invalidMount.tar.lz4")
+				err, werr := packIt(tga, invalidMount, "/tmp/fixtures/tarfiles/invalidMount.tar.zz")
 
 				g.Assert(err == nil).IsTrue("Failed to read the stream")
 				g.Assert(werr != nil).IsTrue("Failed to properly stat 'mount'")
@@ -73,7 +73,7 @@ func TestLz4Archive(t *testing.T) {
 		g.Describe("Unpack", func() {
 			g.It("Should return no error", func() {
 				tga := New()
-				g.Assert(tga != nil).IsTrue("failed to create lz4Archive")
+				g.Assert(tga != nil).IsTrue("failed to create s2Archive")
 
 				err := unpackIt(tga, validFile)
 
@@ -106,22 +106,22 @@ func TestLz4Archive(t *testing.T) {
 
 			g.It("Should return error on invalid tarfile", func() {
 				tga := New()
-				g.Assert(tga != nil).IsTrue("failed to create lz4Archive")
+				g.Assert(tga != nil).IsTrue("failed to create s2Archive")
 
 				err := unpackIt(tga, invalidFile)
 
 				g.Assert(err != nil).IsTrue("Failed to return error")
-				g.Assert(err.Error()).Equal("lz4: bad magic number")
+				g.Assert(err.Error()).Equal("s2: corrupt input")
 			})
 
 			g.It("Should return error on missing file", func() {
 				tga := New()
-				g.Assert(tga != nil).IsTrue("failed to create lz4Archive")
+				g.Assert(tga != nil).IsTrue("failed to create s2Archive")
 
 				err := unpackIt(tga, missingFile)
 
 				g.Assert(err != nil).IsTrue("Failed to return error")
-				g.Assert(err.Error()).Equal("open /tmp/fixtures/tarfiles/test2.tar.lz4: no such file or directory")
+				g.Assert(err.Error()).Equal("open /tmp/fixtures/tarfiles/test2.tar.zz: no such file or directory")
 			})
 		})
 	})
@@ -174,9 +174,9 @@ func unpackIt(a archive.Archive, src string) error {
 	return a.Unpack("/tmp/extracted", reader)
 }
 
-func createBadLz4file() {
+func createBadS2file() {
 	content := []byte("hello\ngo\n")
-	err := ioutil.WriteFile("/tmp/fixtures/tarfiles/bad.tar.lz4", content, 0644)
+	err := ioutil.WriteFile("/tmp/fixtures/tarfiles/bad.tar.zz", content, 0644)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -198,7 +198,7 @@ func createMountContent() {
 
 func createFixtures() {
 	createDirectories()
-	createBadLz4file()
+	createBadS2file()
 	createMountContent()
 }
 
@@ -248,7 +248,7 @@ var (
 		"subdir",
 	}
 
-	validFile   = "/tmp/fixtures/tarfiles/test.tar.lz4"
-	invalidFile = "/tmp/fixtures/tarfiles/bad.tar.lz4"
-	missingFile = "/tmp/fixtures/tarfiles/test2.tar.lz4"
+	validFile   = "/tmp/fixtures/tarfiles/test.tar.zz"
+	invalidFile = "/tmp/fixtures/tarfiles/bad.tar.zz"
+	missingFile = "/tmp/fixtures/tarfiles/test2.tar.zz"
 )

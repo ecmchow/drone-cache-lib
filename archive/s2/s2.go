@@ -1,4 +1,4 @@
-package lz4
+package s2
 
 // special thanks to this medium article:
 // https://medium.com/@skdomino/taring-untaring-files-in-go-6b07cf56bc07
@@ -6,31 +6,32 @@ package lz4
 import (
 	"io"
 
+	"github.com/klauspost/compress/s2"
+
 	"github.com/ecmchow/drone-cache-lib/archive"
 	"github.com/ecmchow/drone-cache-lib/archive/tar"
-	"github.com/pierrec/lz4/v4"
 )
 
-type lz4Archive struct{}
+type s2Archive struct{}
 
 // New creates an archive that uses the .tar.gz file format.
 func New() archive.Archive {
-	return &lz4Archive{}
+	return &s2Archive{}
 }
 
-func (a *lz4Archive) Pack(srcs []string, w io.Writer) error {
-	zw := lz4.NewWriter(w)
+func (a *s2Archive) Pack(srcs []string, w io.Writer) error {
+	zw := s2.NewWriter(w)
 	defer zw.Close()
 
 	taP := tar.New()
 
-	err := taP.Pack(srcs, zw)
+	pErr := taP.Pack(srcs, zw)
 
-	return err
+	return pErr
 }
 
-func (a *lz4Archive) Unpack(dst string, r io.Reader) error {
-	zr := lz4.NewReader(r)
+func (a *s2Archive) Unpack(dst string, r io.Reader) error {
+	zr := s2.NewReader(r)
 
 	taU := tar.New()
 
