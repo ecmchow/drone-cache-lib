@@ -31,10 +31,11 @@ func (a *lz4Archive) Pack(srcs []string, w io.Writer) error {
 
 func (a *lz4Archive) Unpack(dst string, r io.Reader) error {
 	zr := lz4.NewReader(r)
+	zrc := io.NopCloser(zr)
 
 	taU := tar.New()
 
-	fwErr := taU.Unpack(dst, zr)
+	fwErr := taU.Unpack(dst, zrc)
 
 	return fwErr
 }
