@@ -21,11 +21,15 @@ func New() archive.Archive {
 
 func (a *lz4Archive) Pack(srcs []string, w io.Writer) error {
 	zw := lz4.NewWriter(w)
+	err := zw.Apply(lz4.ConcurrencyOption(0), lz4.BlockSizeOption(lz4.Block1Mb))
+	if err != nil {
+		return err
+	}
 	defer zw.Close()
 
 	taP := tar.New()
 
-	err := taP.Pack(srcs, zw)
+	err = taP.Pack(srcs, zw)
 
 	return err
 }
