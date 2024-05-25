@@ -33,9 +33,7 @@ func (a *lz4Archive) Pack(srcs []string, w io.Writer) error {
 func (a *lz4Archive) Unpack(dst string, r io.Reader) error {
 	log.Printf("Unpack called with dst: %s, reader type: %T\n", dst, r)
 	zr := lz4.NewReader(r)
-	err := zr.Apply(lz4.OnBlockDoneOption(func(n int) {
-		log.Printf("lz4 OnBlockDoneOption")
-	}), lz4.ConcurrencyOption(0))
+	err := zr.Apply(lz4.ConcurrencyOption(0))
 	if err != nil {
 		return err
 	}
