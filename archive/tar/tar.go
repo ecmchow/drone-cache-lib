@@ -111,26 +111,26 @@ func (a *tarArchive) Unpack(dst string, r io.Reader) error {
 		}
 
 		target := filepath.Join(dst, header.Name)
-		log.Printf("Processing file: %s", target)
+		// log.Printf("Processing file: %s", target)
 
 		switch header.Typeflag {
 		case tar.TypeSymlink:
-			log.Printf("Symlink found at %s", target)
+			// log.Printf("Symlink found at %s", target)
 			_, err := os.Stat(target)
 			if err == nil {
-				log.Printf("Failed to create symlink because file already exists at %s", target)
+				// log.Printf("Failed to create symlink because file already exists at %s", target)
 				return fmt.Errorf("Failed to create symlink because file already exists at %s", target)
 			}
 
-			log.Printf("Creating link %s to %s", target, header.Linkname)
+			// log.Printf("Creating link %s to %s", target, header.Linkname)
 			err = os.Symlink(header.Linkname, target)
 			if err != nil {
-				log.Printf("Failed creating link %s to %s", target, header.Linkname)
+				// log.Printf("Failed creating link %s to %s", target, header.Linkname)
 				return err
 			}
 
 		case tar.TypeDir:
-			log.Printf("Directory found at %s", target)
+			// log.Printf("Directory found at %s", target)
 			if _, err := os.Stat(target); err != nil {
 				if err := os.MkdirAll(target, 0755); err != nil {
 					return err
@@ -138,7 +138,7 @@ func (a *tarArchive) Unpack(dst string, r io.Reader) error {
 			}
 
 		case tar.TypeReg:
-			log.Printf("File found at %s", target)
+			// log.Printf("File found at %s", target)
 			f, err := os.OpenFile(target, os.O_CREATE|os.O_RDWR, os.FileMode(header.Mode))
 			if err != nil {
 				return err
@@ -147,13 +147,13 @@ func (a *tarArchive) Unpack(dst string, r io.Reader) error {
 			_, err = io.Copy(f, tr)
 			f.Close()
 			if err != nil {
-				log.Printf("Error copying file contents: %v", err)
+				// log.Printf("Error copying file contents: %v", err)
 				return err
 			}
 
 			err = os.Chtimes(target, time.Now(), header.ModTime)
 			if err != nil {
-				log.Printf("Error changing file times: %v", err)
+				// log.Printf("Error changing file times: %v", err)
 				return err
 			}
 		}
