@@ -50,6 +50,7 @@ func (c Cache) Restore(src string, fallback string) error {
 }
 
 func restoreCache(src string, s storage.Storage, a archive.Archive) error {
+	log.Println("restoreCache started")
 	reader, writer := io.Pipe()
 
 	cw := make(chan error, 1)
@@ -57,12 +58,17 @@ func restoreCache(src string, s storage.Storage, a archive.Archive) error {
 
 	go func() {
 		defer writer.Close()
-
-		cw <- s.Get(src, writer)
+		log.Println("Calling s.Get")
+		err := s.Get(src, writer)
+		log.Printf("s.Get returned with error: %v", err)
+		cw <- err
 	}()
 
+	log.Println("Calling a.Unpack")
 	err := a.Unpack("", reader)
+	log.Printf("a.Unpack returned with error: %v", err)
 	werr := <-cw
+	log.Printf("Received from channel: %v", werr)
 
 	if werr != nil {
 		return werr
