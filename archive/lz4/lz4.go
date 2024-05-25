@@ -5,6 +5,7 @@ package lz4
 
 import (
 	"io"
+	"log"
 
 	"github.com/ecmchow/drone-cache-lib/archive"
 	"github.com/ecmchow/drone-cache-lib/archive/tar"
@@ -30,6 +31,7 @@ func (a *lz4Archive) Pack(srcs []string, w io.Writer) error {
 }
 
 func (a *lz4Archive) Unpack(dst string, r io.Reader) error {
+	log.Printf("Unpack called with dst: %s, reader type: %T\n", dst, r)
 	zr := lz4.NewReader(r)
 	zrc := io.NopCloser(zr)
 

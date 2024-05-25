@@ -92,85 +92,68 @@ func (a *tarArchive) Pack(srcs []string, w io.Writer) error {
 }
 
 func (a *tarArchive) Unpack(dst string, r io.Reader) error {
+	log.Println("Unpack started")
 	tr := tar.NewReader(r)
 
 	for {
 		header, err := tr.Next()
 
 		switch {
-
-		// if no more files are found return
 		case err == io.EOF:
+			log.Println("No more files found, returning")
 			return nil
-
-		// return any other error
 		case err != nil:
+			log.Printf("Error reading next header: %v", err)
 			return err
-
-		// if the header is nil, just skip it (not sure how this happens)
 		case header == nil:
+			log.Println("Header is nil, skipping")
 			continue
 		}
 
-		// the target location where the dir/file should be created
 		target := filepath.Join(dst, header.Name)
+		log.Printf("Processing file: %s", target)
 
-		// the following switch could also be done using fi.Mode(), not sure if there
-		// a benefit of using one vs. the other.
-		// fi := header.FileInfo()
-
-		// check the file type
 		switch header.Typeflag {
-
-		// if its a symlink and it doesn't exist create it
 		case tar.TypeSymlink:
-			log.Debugf("Symlink found at %s", target)
-
-			// Check if something already exists
+			log.Printf("Symlink found at %s", target)
 			_, err := os.Stat(target)
 			if err == nil {
+				log.Printf("Failed to create symlink because file already exists at %s", target)
 				return fmt.Errorf("Failed to create symlink because file already exists at %s", target)
 			}
 
-			// Create the link
-			log.Debugf("Creating link %s to %s", target, header.Linkname)
+			log.Printf("Creating link %s to %s", target, header.Linkname)
 			err = os.Symlink(header.Linkname, target)
-
 			if err != nil {
-				log.Infof("Failed creating link %s to %s", target, header.Linkname)
+				log.Printf("Failed creating link %s to %s", target, header.Linkname)
 				return err
 			}
 
-		// if its a dir and it doesn't exist create it
 		case tar.TypeDir:
-			log.Debugf("Directory found at %s", target)
+			log.Printf("Directory found at %s", target)
 			if _, err := os.Stat(target); err != nil {
 				if err := os.MkdirAll(target, 0755); err != nil {
 					return err
 				}
 			}
 
-		// if it's a file create it
 		case tar.TypeReg:
-			log.Debugf("File found at %s", target)
+			log.Printf("File found at %s", target)
 			f, err := os.OpenFile(target, os.O_CREATE|os.O_RDWR, os.FileMode(header.Mode))
 			if err != nil {
 				return err
 			}
 
-			// copy over contents
 			_, err = io.Copy(f, tr)
-
-			// Explicitly close otherwise too many files remain open
 			f.Close()
-
 			if err != nil {
+				log.Printf("Error copying file contents: %v", err)
 				return err
 			}
 
 			err = os.Chtimes(target, time.Now(), header.ModTime)
-
 			if err != nil {
+				log.Printf("Error changing file times: %v", err)
 				return err
 			}
 		}
